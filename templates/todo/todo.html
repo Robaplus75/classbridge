@@ -1,0 +1,207 @@
+{% extends "navigation/navigation.html" %}
+{% block head %}
+    <style type="text/css">
+        .todo_container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .ui {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 200px;
+        }
+        .todo {
+            display: flex;
+            flex-direction: column;
+            
+            border-bottom: 1px solid #2a2185;
+            padding: 10px 10px;
+            
+        }
+        .todo_info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .todo_edit{
+            display: flex;
+            justify-content: right;
+        }
+        .todo_edit a {
+            margin-right: 10px;
+        }
+        .notcomplete_status{
+            background-color: #e8e8e8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            padding: 5px 2px;
+            color: rgba(0,0,0,.6);
+            font-size: 13px;
+            border: 0;
+            border-radius: 7px;
+            cursor: pointer;
+
+        }
+        .complete_status{
+            background-color: #21ba45;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            padding: 5px 2px;
+            color: white;
+            font-size: 13px;
+            border: 0;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+        .ui h1 {
+            color: #2a2185;
+        }
+        .todo_form {
+            display: flex;
+            flex-direction: column;
+            padding: 50px 0;
+        }
+        .todo_title {
+            display: flex;
+            flex-direction: column;
+            
+        }
+        .todo_input {
+            height: 30px;
+            max-width: 1000px;
+            margin-top: 20px;
+            border-top: 0;
+            border-left: 0;
+            border-right: 0;
+            border-bottom-color: #2a2185;
+            padding: 10px;
+
+        }
+        .btn {
+            text-decoration: none;
+            background-color: #2a2185;
+            width: 80px;
+            padding: 5px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid #2a2185;
+            border-radius: 10%;
+            font-weight: bolder;
+            font-size: 12px;
+        }
+        .btn:hover {
+            color: #2a2185;
+            background-color: white;
+            transition-duration: 0.1s;
+            cursor: pointer;
+        }
+        hr {
+            border-color: #2a2185;
+        }
+    </style>
+    
+{% endblock %}
+{% block userfullname %}{{ user.name }}{% endblock %}
+{% block content %}
+<div class="todo_container">
+    <div style="margin-top: 50px;" class="ui">
+        <h1 class="">To Do</h1>
+
+        <form class="todo_form" action="/todos" method="POST">
+            <div class="todo_title">
+                <label>Add Todo</label>
+                <input class="todo_input" type="text" name="title" placeholder="Enter Todo..."><br>
+            </div>
+            <button value="add" class="btn" type="submit">Add</button>
+        </form>
+        <br>
+        
+
+        <!-- ======= Todo bars ======= -->
+        {% if user.todos %}
+        {% for todo in user.todos %}
+        <div class="todo">
+            <div class="todo_info">
+                <p class=""> {{ todo.title }}</p>
+                {% if todo.completed == 'false' %}
+                    <button onclick="change_status({{ (loop.index - 1) }})" class="notcomplete_status {{ 'btn' ~ (loop.index - 1) }}">Not Complete</button>
+                {% else %}
+                    <button onclick="change_status({{ (loop.index - 1) }})" class="complete_status {{ 'btn' ~ (loop.index - 1) }}">Completed</button>
+                {% endif %}
+            </div>
+            <form action="/form" method="POST">
+                <div class="todo_edit">
+                    
+                    <!--<a value='update' class="btn" href=''>Update</a>-->
+                    <a value='delete' class="btn" href='/delete/{{ (loop.index - 1) }}'>Delete</a>
+
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="todo">
+            <div>
+                There are no todos...
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript">
+    function change_status(num) {
+        const complete_status = document.querySelector('.btn'+ num);
+        if (complete_status.innerText == 'Completed') {
+            complete_status.innerText = 'Not Complete';
+            complete_status.style.backgroundColor = '#e8e8e8';
+            complete_status.style.color = 'rgba(0,0,0,.6)';
+            async function sendPostRequest() {
+              try {
+                await fetch('/todo_status/'+num+'/false', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ /* Your request payload here */ })
+                });
+                console.log('POST request sent successfully without waiting for a response.');
+              } catch (error) {
+                console.error('Error sending POST request:', error);
+              }
+            }
+            sendPostRequest();
+
+
+        } else {
+            complete_status.innerText = 'Completed';
+            complete_status.style.backgroundColor = '#21ba45';
+            complete_status.style.color = 'white'
+            async function sendPostRequest() {
+              try {
+                await fetch('/todo_status/'+num+'/true', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ /* Your request payload here */ })
+                });
+                console.log('POST request sent successfully without waiting for a response.');
+              } catch (error) {
+                console.error('Error sending POST request:', error);
+              }
+            }
+            sendPostRequest();
+        }
+    }
+</script>
+
+{% endblock %}

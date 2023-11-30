@@ -1,0 +1,71 @@
+{% extends "navigation/navigation.html" %}
+{% block head %}
+	<style type="text/css">
+		.container {
+			padding-top: 20px;
+			width: 100%;
+			display: flex;
+			justify-content: space-around;
+			flex-wrap: wrap;
+		}
+		.assignmentbox {
+			width: 500px;
+			min-height: 500px;
+			border: 2px solid #2a2185;
+			display: flex;
+			flex-direction: column;
+			margin: 20px;
+			background-color: #2a2185;
+			justify-content: space-around;
+			padding-top: 20px;
+			border-radius: 12px;
+		}
+		.assignment_list {
+			flex: 9;
+			border: 1px solid #2a2185;
+			margin: 10px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: whitesmoke;
+			border-radius: 8px;
+		}
+		.assignmentbox h2 {
+			flex: 1;
+			color: whitesmoke;
+		}
+		.assignment {
+			width: 85%;
+			border: 1px solid #2a2185;
+			margin-top: 10px;
+			border-radius: 8px;
+			padding: 8px;
+		}
+		.assignment h2 {
+			color: #2a2185;
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="assignmentbox">
+				<center><h2>Instructor's Assignments</h2></center>
+				<div class="assignment_list">
+					{% if classroom['assignments'] %}
+						{% for assignment in classroom['assignments'] %}
+							<div class="assignment">
+								<h2>{{ assignment['title'] }}</h2>
+								<p>{{ assignment['description'] }}</p>
+							</div>
+						{% endfor %}
+					{% else %}
+							<div class="assignment">
+								<h2>You Have no Assignments</h2>
+								<p></p>
+							</div>
+					{% endif %}
+				</div>
+		</div>
+	</div>
+{% endblock %}

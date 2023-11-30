@@ -1,0 +1,177 @@
+{% extends "/navigation/navigation.html" %}
+{% block head %}
+
+
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='gpa_calculator/style.css') }}">
+
+{% endblock %}
+
+{% block userfullname %}{{ user.name }}{% endblock %}
+
+{% block content %}
+
+			<div class="gpa_container" id="gpabox">	
+				
+				<div id="lcol" class="gpabox">
+
+					<div id="doc" class="">
+						
+						<div class="gpacalc innercolor" style="padding: 15px;border-radius: 10px;margin-bottom: 20px;">
+							<h1 class="">GPA Calculator</h1>
+							<form id="calcform" name="calcform" class="calc" autocomplete="off">
+							<table id="tbl">
+								<tr>
+									<td>Class</td>
+									<td>Grade</td>
+									<td>Credits /<br>Hours</td>
+								</tr>
+								<tbody>
+								</tbody>
+							</table>
+						  
+						   <div class="form-group butt">
+							  <button type="button" id="calcbtn" title="Calculate" class="btn "> Calculate</button>
+							  <button type="button" id="addrow" title="Add row" class="btn"> Row</button>
+						   </div>
+						   <div class="form-group">
+							  <label for="gpa">GPA</label>
+							  <input type="text" id="gpa" readonly class="form-control">
+						   </div>
+						   <div class="form-group">
+							  <div id="gpacircle" class="red small mb-3"></div>
+						   </div>
+						   <div class="form-group">
+							  <label for="total">Total credits/hours</label>
+							  <input type="number" step="any" id="total" class="form-control" readonly>
+						   </div>
+						   <div class="form-group">
+							  <label for="area">GPA calculation</label>
+							  <input rows="3" id="area" class="form-control" readonly>
+						   </div>
+							</form>
+					  </div>
+					</div>
+				
+				</div>
+			</div>
+				
+				<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+				
+				<script>
+				   var irow=0;
+				   $( document ).ready(function() {
+					  $("#calcbtn").click( Calc );
+					  $("#resetbtn").click( OnReset );
+					  $("#addrow").click( AddRow );
+					  $("#calcbtn2").click( Calc2 );
+					  for(i=0; i<6; i++)
+						 AddRow();
+				   });
+				   function OnReset()
+				   {
+					  $("#gpacircle").hide();
+				   }
+				   function Calc()
+				   {
+					  var glook=[-1,4.00, 3.75, 3.50, 3.00, 2.75, 2.50, 2.00, 1.75, 1.50, 1.00, 0.75, 0, -1, -1];
+					  var gpa=0;
+					  var sum=0;
+					  var txt1="";
+					  var txt2="";
+					  for(var i=1; i<=irow+1; i++)
+					  {
+						 hours = $("#tbl > tbody > tr:nth-child("+i+") > td:nth-child(3) > input").val();
+						 hours = parseFloat(hours);
+						 igrade = $("#tbl > tbody > tr:nth-child("+i+") > td:nth-child(2) > select").prop("selectedIndex");
+						 grade = glook[igrade];
+						 if( hours>0 && grade>=0 )
+						 {
+							gpa+=hours*grade;
+							sum+=hours;
+							txt1+=hours+"\u00D7"+grade+"+";
+							txt2+=hours+"+";
+						 }
+					  }
+					  cgpa=$("#cgpa").val();
+					  chours=$("#chours").val();
+					  cgpa = parseFloat(cgpa);
+					  chours = parseFloat(chours);
+					  if( cgpa>=0 && chours>0 )
+					  {
+						 gpa+=chours*cgpa;
+						 sum+=chours;
+						 txt1+=chours+"\u00D7"+cgpa+"+";
+						 txt2+=chours+"+";
+					  }
+					  gpa/=sum;
+					  gpa=gpa.toFixed(2);
+					  txt1=txt1.slice(0, -1);
+					  txt2=txt2.slice(0, -1);
+					  var txt="("+txt1+") / ("+txt2+") = "+gpa;
+					  $("#gpa").val(gpa);
+					  $("#total").val(sum);
+					  $("#area").val(txt);
+					  var percent=25*gpa;
+					  if( percent>100 ) percent=100;
+					  $("#gpacircle").percircle({percent: percent,text: gpa});
+					  $("#gpacircle").show();
+				   }
+				   function AddRow()
+				   {
+					  $('#tbl > tbody > tr').eq(irow++).after("<tr>\
+						 <td><input type='text' name='class[]' class='form-control' placeholder='class "+irow+"'></td>\
+						 <td><select name='grade[]' class='form-control gradee'>\
+							<option selected>--</option>\
+							<option>A</option>\
+							<option>A-</option>\
+							<option>B+</option>\
+							<option>B</option>\
+							<option>B-</option>\
+							<option>C+</option>\
+							<option>C</option>\
+							<option>C-</option>\
+							<option>D</option>\
+							<option>F</option>\
+							<option>P</option>\
+							<option>NP</option>\
+						 </select></td>\
+						 <td><input type='number' min='0' step='any' name='hours[]' class='form-control'></td>\
+					  </tr>");
+				   }
+				   function GetLetterFromGPA(gpa)
+				   {
+					  var letter="";
+					  var lettertbl=['A+','A','A-','B+','B','B-','C+','C','C-','D','F'];
+					  var gpatbl=[4.00,4.00, 3.75, 3.5, 3.00, 2.75, 2.5, 2.00, 1.75, 1, 0];
+					  for(var i=0; i<gpatbl.length; i++)
+						 if( gpa>=gpatbl[i] )
+						 {
+							letter = lettertbl[i];
+							break;
+						 }
+					  return letter;
+				   }
+				   function Calc2()
+				   {
+					  var cgpa=parseFloat($("#curgpa").val());
+					  var tgpa=parseFloat($("#tgpa").val());
+					  var chours=parseFloat($("#curhours").val());
+					  var ahours=parseFloat($("#ahours").val());
+					  var h=chours+ahours;
+					  //tgpa=(cgpa*chours+fgpa*ahours)/h
+					  var fgpa=(h*tgpa-chours*cgpa)/ahours;
+					  var flet=GetLetterFromGPA(fgpa);
+					  $("#fgpa").val(fgpa.toFixed(2));
+					  $("#flet").val(flet);
+					  var percent=25*fgpa;
+					  if( percent>100 ) percent=100;
+					  $("#finalcircle").percircle({percent: percent,text: flet});
+					  $("#finalcircle").show();
+				   }
+				</script>
+				
+				
+
+			</div>
+
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends "navigation/navigation.html" %}
+{% block head %}
+ <style type="text/css">
+        a {
+            text-decoration: none;
+        }
+        .popup-container {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 9999;
+        }
+
+        .popup-content {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #fff;
+          padding: 20px;
+          border: 2px solid purple;
+          border-radius: 12px;
+          height: 200px;
+          width: 350px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+        }
+        .popup-content form{
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-content form input {
+            border-top: 0;
+            border-right: 0;
+            border-left: 0;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-color: purple;%
+            width: 70%;
+        }
+
+        .error-message {
+          color: red;
+        }
+
+    </style>
+{% endblock %}
+{% block userfullname %}{{ user.name }}{% endblock %}
+{% block content %}
+<!-- ========================= Main ==================== -->
+        
+            
+            
+            <!-- ======================= Cards ================== -->
+            <div class="cardBox">
+                <a href="/todos">
+                    <div class="card">
+                        <div>
+                            <div class="numbers">My Todos</div>
+                            <div class="cardName">Daily Views</div>
+                        </div>
+
+                        <div class="iconBx">
+                            <ion-icon name="eye-outline"></ion-icon>
+                        </div>
+                    </div>
+                </a>
+                <a href='/gpa_calculator'> 
+                    <div class="card">
+                        <div>
+                            <div class="numbers">GPA Calculator</div>
+                            <div class="cardName">Sales</div>
+                        </div>
+
+                        <div class="iconBx">
+                            <ion-icon name="cart-outline"></ion-icon>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- ================ Order Details List ================= -->
+            <div class="details">
+
+                <!-- ================= New Customers ================ -->
+                 <div id="popupContainer" class="popup-container">
+                  <div class="popup-content">
+                        <h2>Join Class</h2>
+                        <form action="/home/join" method="POST" id="joinForm">
+                              <label for="classCode">Class Code:</label>
+                              <input type="text" id="classCode" name="classCodee" required>
+                              <span id="errorMessage" class="error-message"></span>
+                              <button type="submit">Join</button>
+                        </form>
+                  </div>
+                </div>
+
+                <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Your Classes</h2>
+                        <button onclick="joinbtnn()" class="btn" id="joinClassBtn">Join Class</button>
+                    </div>
+
+                    <table>
+
+                        {% if user.joined_classes %}
+                            {% for class in user.joined_classes %}
+                            <tr onclick="window.location.href = '/class/{{ class['id'] }}';">
+                                <td width="60px">
+                                    <div class="imgBx"><img src="{{ url_for('static', filename='dashboard/imgs/customer01.jpg') }}" alt=""></div>
+                                </td>
+                                <td>
+                                    <h4>{{ class['name'] }}<br> <span>Instructor: {{ class['instructor'] }}</span></h4>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td width="60px">
+                                    <div class="imgBx"></div>
+                                </td>
+                                <td>
+                                    <h4> You Haven't Joined any Classes<br> <span></span></h4>
+                                </td>
+                            </tr>
+                        {% endif %}
+                       
+                    </table>
+                </div>
+
+                <div class="recentOrders">
+                    <div class="cardHeader">
+                        <h2>Notifications</h2>
+                        <a hresf="#" class="btn">View All</a>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Class</td>
+                                <td>Date</td>
+                                <td>Info</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td>Paid</td>
+                            </tr>
+
+                            <tr>
+                                <td>Dell Laptop</td>
+                                <td>$110</td>
+                                <td>Due</td>
+                            </tr>
+
+                            <tr>
+                                <td>Apple Watch</td>
+                                <td>$1200</td>
+                                <td>Paid</td>
+                            </tr>
+
+                            <tr>
+                                <td>Addidas Shoes</td>
+                                <td>$620</td>
+                                <td>Due</td>
+                            </tr>
+
+                            <tr>
+                                <td>Star Refrigerator</td>
+                                <td>$1200</td>
+                                <td>Paid</td>
+                            </tr>
+
+                            <tr>
+                                <td>Dell Laptop</td>
+                                <td>$110</td>
+                                <td>Due</td>
+                            </tr>
+
+                            <tr>
+                                <td>Apple Watch</td>
+                                <td>$1200</td>
+                                <td>Paid</td>
+                            </tr>
+
+                            <tr>
+                                <td>Addidas Shoes</td>
+                                <td>$620</td>
+                                <td>Due</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+<script>
+    // Get the necessary elements
+    const joinClassBtn = document.getElementById('joinClassBtn');
+    const popupContainer = document.getElementById('popupContainer');
+    const joinForm = document.getElementById('joinForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Display the popup when the anchor link is clicked
+    function joinbtnn() {
+     
+      popupContainer.style.display = 'block';
+    };
+
+    // Handle form submission
+    
+
+      // Perform further processing or submit the form
+      // ...
+
+    // Close the popup when clicked outside of it
+    popupContainer.addEventListener('click', function(event) {
+      if (event.target === popupContainer) {
+        popupContainer.style.display = 'none';
+        errorMessage.textContent = '';
+      }
+    });
+
+</script>
+{% endblock %}

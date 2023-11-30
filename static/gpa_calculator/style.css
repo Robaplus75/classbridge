@@ -1,0 +1,99 @@
+/* Form group */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+}
+
+/* Primary button */
+        .btn {
+            text-decoration: none;
+            background-color: #2a2185;
+            width: 80px;
+            padding: 5px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: 2px solid #2a2185;
+            border-radius: 10%;
+            font-weight: bolder;
+            font-size: 12px;
+        }
+        .btn:hover {
+            color: #2a2185;
+            background-color: white;
+            transition-duration: 0.1s;
+            cursor: pointer;
+        }
+
+/* Form control */
+.form-control {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+}
+
+.form-control:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Red text */
+.red {
+  color: red;
+}
+
+/* Small text with bottom margin */
+.small.mb-3 {
+  font-size: small;
+  margin-bottom: .5rem;
+}
+
+/* =========== My Css ============ */
+.gpa_container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #2a2185;
+}
+.gpabox {
+  max-width: 600px;
+}
+.butt {
+  display: flex;
+  align-items: center;
+}
+.butt button {
+  margin-right: 8px;
+}

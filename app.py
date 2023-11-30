@@ -157,7 +157,7 @@ def todo():
     elif request.method == 'POST':
         added_todo = request.form['title']
         for user in users:
-            if user == logged_user:
+            if user['id'] == logged_user['id']:
                 user['todos'].insert(0, {'title': added_todo, 'completed': 'false'})
                 session['logged_user'] = user
                 return redirect('/todos')

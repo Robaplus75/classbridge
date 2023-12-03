@@ -9,7 +9,7 @@
 			flex-wrap: wrap;
 		}
 		.assignmentbox {
-			width: 500px;
+			width: 450px;
 			min-height: 500px;
 			border: 2px solid #2a2185;
 			display: flex;
@@ -21,7 +21,7 @@
 			border-radius: 12px;
 		}
 		.assignment_list {
-			flex: 9;
+			flex: 5;
 			border: 1px solid #2a2185;
 			margin: 10px;
 			display: flex;
@@ -29,6 +29,7 @@
 			align-items: center;
 			background-color: whitesmoke;
 			border-radius: 8px;
+			overflow-y: auto;
 		}
 		.assignmentbox h2 {
 			flex: 1;
@@ -40,15 +41,86 @@
 			margin-top: 10px;
 			border-radius: 8px;
 			padding: 8px;
+			margin-bottom: 5px;
 		}
 		.assignment h2 {
 			color: #2a2185;
 		}
+		.addtext {
+			flex: 2;
+			background-color: whitesmoke;
+			padding: 12px;
+			border-radius: 12px;
+			display: flex;
+			flex-direction: column;
+			margin: 10px;
+
+		}
+		.textbox {
+			margin: 5px;
+			width: 80%;
+			background-color: gr;
+
+		}
+		.textbox label {
+			color: #2a2185;
+
+		}
+		.textbox input {
+			border-top: 0;
+			border-right: 0;
+			border-left: 0;
+			width: 100%;
+			border-color: #2a2185;
+			padding-left: 10px;
+
+		}
+		.submitbtn {
+			margin-top: 5px;
+		}
 	</style>
 {% endblock %}
 
+{% block userfullname %}{{ user.name }}{% endblock %}
+
 {% block content %}
 	<div class="container">
+		<div class="assignmentbox">
+				<center><h2>UpComming Exams</h2></center>
+				<div class="assignment_list">
+					{% if classroom['exams'] %}
+						{% for exam in classroom['exams'] %}
+							<div class="assignment">
+								<h2>{{ exam['title'] }}</h2>
+								<p>{{ exam['description'] }}</p><br>
+								<p><b>Date</b>: {{ exam['date'] }}</p>
+							</div>
+						{% endfor %}
+
+					{% else %}
+						<div class="assignment">
+							<h2>There are no upcomming exams</h2>
+						</div>
+					{% endif %}
+				</div>
+				{% if user['occupation'] == 'teacher' %}
+					<form method='POST' action='/class/add_exam/{{ classroom["id"] }}' class="addtext">
+						<div class="textbox">
+							<label for="exam_title">Title: </label><br>
+							<input id='exam_title' type="text" name="add_exam_title" required>
+						</div>
+						<div class="textbox">
+							<label for="exam_description">Description: </label><br>
+							<input id='exam_description' type="text" name="add_exam_description" required>
+						</div>
+						<div class="textbox">
+							<label for="exam_date">Date or Deadline: </label><br>
+							<input id="exam_date" type="text" name="add_exam_date" required>
+						</div>
+						<input class='btn submitbtn' type="submit" name="addexam" value="Add Exam">
+					</form>
+				{% endif %}
+		</div>
 		<div class="assignmentbox">
 				<center><h2>Instructor's Assignments</h2></center>
 				<div class="assignment_list">
@@ -56,16 +128,34 @@
 						{% for assignment in classroom['assignments'] %}
 							<div class="assignment">
 								<h2>{{ assignment['title'] }}</h2>
-								<p>{{ assignment['description'] }}</p>
+								<p>{{ assignment['description'] }}</p><br>
+								<p><b>Date</b>: {{ assignment['date'] }}</p>
 							</div>
 						{% endfor %}
 					{% else %}
 							<div class="assignment">
-								<h2>You Have no Assignments</h2>
+								<h2>There are no Assignments</h2>
 								<p></p>
 							</div>
 					{% endif %}
 				</div>
+				{% if user['occupation'] == 'teacher' %}
+					<form method='POST' action='/class/add_assignment/{{ classroom["id"] }}' class="addtext">
+						<div class="textbox">
+							<label for="exam_title">Title: </label><br>
+							<input id='exam_title' type="text" name="add_exam_title" required>
+						</div>
+						<div class="textbox">
+							<label for="exam_description">Description: </label><br>
+							<input id='exam_description' type="text" name="add_exam_description" required>
+						</div>
+						<div class="textbox">
+							<label for="exam_date">Date or Deadline: </label><br>
+							<input id="exam_date" type="text" name="add_exam_date" required>
+						</div>
+						<input class='btn submitbtn' type="submit" name="addassignment" value="Add Assignment">
+					</form>
+				{% endif %}
 		</div>
 	</div>
 {% endblock %}

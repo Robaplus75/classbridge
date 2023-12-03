@@ -132,73 +132,37 @@
                        
                     </table>
                 </div>
+                {% if user['occupation'] == 'student' %}
+                    <div class="recentCustomers">
+                        <div class="cardHeader">
+                            <h2>Notifications</h2>
+                            
+                        </div>
+                        {% if user['notifications'] %}
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>Class</td>
+                                    <td>Type</td>
+                                </tr>
+                            </thead>
 
-                <div class="recentOrders">
-                    <div class="cardHeader">
-                        <h2>Notifications</h2>
-                        <a hresf="#" class="btn">View All</a>
+                            <tbody >
+                                {% for notification in user['notifications'] %}
+                                <tr>
+                                    <td>{{ notification['name'] }}</td>
+                                    <td>{{ notification['type'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <p>You have no Notifications</p>
+                        {% endif %}
                     </div>
+                {% else %}
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>Class</td>
-                                <td>Date</td>
-                                <td>Info</td>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>Star Refrigerator</td>
-                                <td>$1200</td>
-                                <td>Paid</td>
-                            </tr>
-
-                            <tr>
-                                <td>Dell Laptop</td>
-                                <td>$110</td>
-                                <td>Due</td>
-                            </tr>
-
-                            <tr>
-                                <td>Apple Watch</td>
-                                <td>$1200</td>
-                                <td>Paid</td>
-                            </tr>
-
-                            <tr>
-                                <td>Addidas Shoes</td>
-                                <td>$620</td>
-                                <td>Due</td>
-                            </tr>
-
-                            <tr>
-                                <td>Star Refrigerator</td>
-                                <td>$1200</td>
-                                <td>Paid</td>
-                            </tr>
-
-                            <tr>
-                                <td>Dell Laptop</td>
-                                <td>$110</td>
-                                <td>Due</td>
-                            </tr>
-
-                            <tr>
-                                <td>Apple Watch</td>
-                                <td>$1200</td>
-                                <td>Paid</td>
-                            </tr>
-
-                            <tr>
-                                <td>Addidas Shoes</td>
-                                <td>$620</td>
-                                <td>Due</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                {% endif %}
             </div>
 
 <script>

@@ -168,8 +168,8 @@ form.sign-in-form {
   top: -10%;
   right: 48%;
   transform: translateY(-50%);
-  background-image: linear-gradient(-45deg, #2a2185 0%, #2a2185 100%);
-  transition: 1.8s ease-in-out;
+  background-image: linear-gradient(-45deg, #2a2185 0%, #2a2185 010%);
+  transition: 1.2s ease-in-out;
   border-radius: 50%;
   z-index: 6;
 }
@@ -373,7 +373,30 @@ form.sign-in-form {
   }
 }
 
-@media (max-width: 570px) {
+/* radio styling */
+.user_type {
+
+}
+.user_type_menu {
+  width: 70%;
+}
+.selected {
+
+}
+.selected label{
+  margin-top: 15px;
+  margin-left: 15px;
+}
+.selected input {
+  width: 30px;
+}
+
+.selected input[type="radio"]:checked + label {
+  color: #2a2185;
+}
+/* radio styling end */
+
+@media (max-width: 860px) {
   form {
     padding: 0 1.5rem;
   }
@@ -394,7 +417,8 @@ form.sign-in-form {
   }
 
   .container.sign-up-mode:before {
-    bottom: 28%;
+    bottom: 20%;
     left: 50%;
   }
+
 }

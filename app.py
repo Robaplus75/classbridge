@@ -15,7 +15,23 @@ users = [
                 {'title':'Do Biology HomeWork', 'completed':'false'},
                 {'title':'Do you Project', 'completed':'true'}
         ],
-        'joined_classes': []
+        'joined_classes': [],
+        'occupation':'student',
+        'notifications': []
+    },
+    {
+        'id':'2',
+        'name':'Inst Solomon Wondimu',
+        'username':'sele',
+        'email':'seleminds75@gmail.com',
+        'password':'123',
+        'todos':[
+                {'title':'Give assignments to class B', 'completed':'false'},
+                {'title':'Give them exams to class D', 'completed':'true'}
+        ],
+        'joined_classes': [],
+        'occupation':'teacher',
+        'notifications': []
     }
 ]
 
@@ -29,7 +45,15 @@ classes = [
         'assignments': [
             {
                 'title': 'BioTechnology',
-                'description': 'Prepare a presentation about BioTechnology'
+                'description': 'Prepare a presentation about BioTechnology',
+                'date': 'christmass eve'
+            }
+        ],
+        'exams': [
+            {
+                'title': 'Genetics',
+                'description': 'Contains multiple choices ...',
+                'date': '2 January 2024'
             }
         ]
     },
@@ -42,7 +66,15 @@ classes = [
         'assignments':[
             {
                 'title': 'Covalent Bonds',
-                'description': 'Prepare a presentation about Covalent Bonds'
+                'description': 'Prepare a presentation about Covalent Bonds',
+                'date': 'for the last day'
+            }
+        ],
+        'exams': [
+            {
+                'title': 'Ionic Bonds',
+                'description': 'Contains multiple choices and workout...',
+                'date': '12 January 2024'
             }
         ]
     },
@@ -52,7 +84,8 @@ classes = [
         'name':'Physics',
         'instructor':'Isac Newton',
         'members': [],
-        'assignments':[]
+        'assignments': [],
+        'exams': []
     }
 
 ]
@@ -98,6 +131,10 @@ def form():
             user.pop('submit')
             user['todos'] = []
             user['joined_classes'] = []
+            user['notifications'] = []
+            user['occupation'] = request.form['occupation']   
+            if (user['occupation'] == 'teacher'):
+                user['name'] = f"Inst {user['name']}"         
             
             user_id = str(uuid.uuid4())
             user['id'] = user_id
@@ -115,6 +152,10 @@ def form():
 @app.route('/home')
 def home():
     logged_user = session['logged_user']
+    for user in users:
+        if user['id'] == logged_user['id']:
+            session['logged_user'] = user
+            logged_user = session['logged_user']
     if logged_user:
         return render_template('dashboard/homepage.html', user=logged_user)
     else:
@@ -199,9 +240,54 @@ def class_room(class_id):
             for c in classes:
                 if c['id'] == class_id:
                     return render_template('/class_room/class_room.html', user=logged_user, classroom=c)
-    # ------------Chat room ------
 
-    # ------------end chatroom ---
+# ------------exambox------
+
+@app.route('/class/add_exam/<class_id>', methods=['POST'])
+def addexam(class_id):
+    for c in classes:
+        if c['id'] == class_id:
+            new_exam = {
+                        'title': request.form.get('add_exam_title'),
+                        'description': request.form.get('add_exam_description'),
+                        'date': request.form.get('add_exam_date')
+                        }
+            c['exams'].append(new_exam)
+            for member in c['members']:
+                for user in users:
+                    if user['id'] == member:
+                        notification = {
+                            'name': c['name'],
+                            'type': 'Exam'
+                        }
+                        user['notifications'].append(notification)
+            return redirect(f'/class/{class_id}')
+
+# ------------end exambox ---
+
+# ------------assignmentbox------
+
+@app.route('/class/add_assignment/<class_id>', methods=['POST'])
+def addassignment(class_id):
+    for c in classes:
+        if c['id'] == class_id:
+            new_assignment = {
+                        'title': request.form.get('add_exam_title'),
+                        'description': request.form.get('add_exam_description'),
+                        'date': request.form.get('add_exam_date')
+                    }
+            c['assignments'].append(new_assignment)
+            for member in c['members']:
+                for user in users:
+                    if user['id'] == member:
+                        notification = {
+                            'name': c['name'],
+                            'type': 'Assignment'
+                        }
+                        user['notifications'].append(notification)
+            return redirect(f'/class/{class_id}')
+
+# ------------end exambox ---
     
 
 # ================== End Class room ===============================

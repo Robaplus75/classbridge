@@ -196,7 +196,7 @@ def createclass():
     class_name = request.form['class_name']
     inst_username = request.form['inst_username']
     for user in users:
-        if user['username'] == inst_username and user['occupation'] == 'teacher':
+        if user['username'] == inst_username:
             class_id = str(uuid.uuid4())
             new_class = {
             'id': class_id,
@@ -213,7 +213,8 @@ def createclass():
                     logged_user = u
                     session['logged_user'] = logged_user
             classes.append(new_class)
-            user['joined_classes'].append(new_class)
+            if new_class not in user['joined_classes']:
+                user['joined_classes'].append(new_class)
             print('class created successfully')
             return redirect('/home')
     return redirect('/home')
@@ -295,6 +296,7 @@ def addexam(class_id):
                 for user in users:
                     if user['id'] == member:
                         notification = {
+                            'class_id': c['id'],
                             'name': c['name'],
                             'type': 'Exam'
                         }
@@ -319,6 +321,7 @@ def addassignment(class_id):
                 for user in users:
                     if user['id'] == member:
                         notification = {
+                            'class_id': c['id'],
                             'name': c['name'],
                             'type': 'Assignment'
                         }

@@ -127,6 +127,9 @@
                               <input type="text" id="classCode" name="inst_username" required>
                             </div>
                             <button type="submit" class="btn">Create</button>
+                            <br>
+                            <p>If username doesn't exit the class won't be created</p>
+                            <p>If you want to be the instructor use your username</p>
                         </form>
                   </div>
                 </div>
@@ -183,7 +186,7 @@
 
                             <tbody >
                                 {% for notification in user['notifications'] %}
-                                <tr>
+                                <tr onclick="openclassroom('{{ notification['class_id'] }}')">
                                     <td>{{ notification['name'] }}</td>
                                     <td>{{ notification['type'] }}</td>
                                 </tr>
@@ -218,7 +221,9 @@
     };
 
     // Handle form submission
-    
+    function openclassroom(classroom_id) {
+        window.location.href = "/class/"+classroom_id;
+    }    
 
       // Perform further processing or submit the form
       // ...

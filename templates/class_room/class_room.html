@@ -81,6 +81,7 @@
 		.classcode {
 			color: #2a2185;
 			margin-left: 50px;
+			margin-right: 10px;
 		}
 		.classcode snap{
 			color: blue;
@@ -91,7 +92,8 @@
 {% block userfullname %}{{ user.name }}{% endblock %}
 
 {% block content %}
-	<div class="classcode">Class code: <snap>{{ classroom['classcode'] }}</snap></div>
+	<div class="classcode">Class code: <snap>{{ classroom['classcode'] }}</snap></div><br>
+	<div class="classcode"><p>Only class instructors can insert Assignments or exams</p></div>
 	<div class="container">
 		<div class="assignmentbox">
 				<center><h2>UpComming Exams</h2></center>
@@ -111,7 +113,7 @@
 						</div>
 					{% endif %}
 				</div>
-				{% if user['occupation'] == 'teacher' and user['name'] == classroom['instructor'] %}
+				{% if (user['occupation'] == 'teacher' and user['name'] == classroom['instructor']) or classroom['instructor'] == user['name'] %}
 					<form method='POST' action='/class/add_exam/{{ classroom["id"] }}' class="addtext">
 						<div class="textbox">
 							<label for="exam_title">Title: </label><br>
@@ -147,7 +149,7 @@
 							</div>
 					{% endif %}
 				</div>
-				{% if user['occupation'] == 'teacher' and user['name'] == classroom['instructor'] %}
+				{% if (user['occupation'] == 'teacher' and user['name'] == classroom['instructor']) or classroom['instructor'] == user['name'] %}
 					<form method='POST' action='/class/add_assignment/{{ classroom["id"] }}' class="addtext">
 						<div class="textbox">
 							<label for="exam_title">Title: </label><br>

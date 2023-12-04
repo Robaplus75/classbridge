@@ -14,6 +14,16 @@
           background-color: rgba(0, 0, 0, 0.5);
           z-index: 9999;
         }
+        .popup-container2 {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 9999;
+        }
 
         .popup-content {
           position: absolute;
@@ -30,6 +40,10 @@
           flex-direction: column;
           justify-content: space-around;
         }
+        .create_popup {
+            width: 400px;
+            height: 350px;
+        }
         .popup-content form{
             display: flex;
             flex-direction: column;
@@ -42,6 +56,7 @@
             margin-bottom: 20px;
             border-color: purple;%
             width: 70%;
+            padding-left: 20px;
         }
 
         .error-message {
@@ -88,14 +103,30 @@
             <div class="details">
 
                 <!-- ================= New Customers ================ -->
-                 <div id="popupContainer" class="popup-container">
+                <div id="popupContainer" class="popup-container">
                   <div class="popup-content">
                         <h2>Join Class</h2>
                         <form action="/home/join" method="POST" id="joinForm">
                               <label for="classCode">Class Code:</label>
                               <input type="text" id="classCode" name="classCodee" required>
-                              <span id="errorMessage" class="error-message"></span>
-                              <button type="submit">Join</button>
+
+                              <button type="submit" class="btn">Join</button>
+                        </form>
+                  </div>
+                </div>
+                <div id="popupContainer2" class="popup-container2">
+                  <div class="popup-content create_popup">
+                        <h2>Create Class</h2>
+                        <form action="/home/create" method="POST" id="joinForm">
+                            <div>
+                              <label for="classCode">Class Name:</label><br>
+                              <input type="text" id="classCode" name="class_name" required>
+                            </div>
+                            <div>
+                              <label for="classCode">Instructor Username: </label><br>
+                              <input type="text" id="classCode" name="inst_username" required>
+                            </div>
+                            <button type="submit" class="btn">Create</button>
                         </form>
                   </div>
                 </div>
@@ -103,7 +134,10 @@
                 <div class="recentCustomers">
                     <div class="cardHeader">
                         <h2>Your Classes</h2>
-                        <button onclick="joinbtnn()" class="btn" id="joinClassBtn">Join Class</button>
+                        <div>
+                        <button onclick="createbtnn()" class="btn" id="joinClassBtn">Create</button>
+                        <button onclick="joinbtnn()" class="btn" id="joinClassBtn">Join</button>
+                        </div>
                     </div>
 
                     <table>
@@ -134,7 +168,7 @@
                 </div>
                 {% if user['occupation'] == 'student' %}
                     <div class="recentCustomers">
-                        <div class="cardHeader">
+                        <div class="cardHeader" style="margin-bottom: 10px;">
                             <h2>Notifications</h2>
                             
                         </div>
@@ -169,6 +203,7 @@
     // Get the necessary elements
     const joinClassBtn = document.getElementById('joinClassBtn');
     const popupContainer = document.getElementById('popupContainer');
+    const popupContainer2 = document.getElementById('popupContainer2');
     const joinForm = document.getElementById('joinForm');
     const errorMessage = document.getElementById('errorMessage');
 
@@ -176,6 +211,10 @@
     function joinbtnn() {
      
       popupContainer.style.display = 'block';
+    };
+    function createbtnn() {
+     
+      popupContainer2.style.display = 'block';
     };
 
     // Handle form submission
@@ -188,6 +227,12 @@
     popupContainer.addEventListener('click', function(event) {
       if (event.target === popupContainer) {
         popupContainer.style.display = 'none';
+        errorMessage.textContent = '';
+      }
+    });
+    popupContainer2.addEventListener('click', function(event) {
+      if (event.target === popupContainer2) {
+        popupContainer2.style.display = 'none';
         errorMessage.textContent = '';
       }
     });

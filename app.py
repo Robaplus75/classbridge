@@ -90,6 +90,14 @@ classes = [
 
 ]
 
+import random
+import string
+
+def generate_random_string():
+    random_string = ''.join(random.choices(string.ascii_uppercase, k=6))
+    return random_string
+
+
 
 
 @app.route('/users')
@@ -180,8 +188,38 @@ def joinclass():
             
         return redirect('/home')
 
-
 # ======= End Join Class ==
+# ======= Create Class ====
+@app.route('/home/create', methods=['POST'])
+def createclass():
+    logged_user = session['logged_user']
+    class_name = request.form['class_name']
+    inst_username = request.form['inst_username']
+    for user in users:
+        if user['username'] == inst_username and user['occupation'] == 'teacher':
+            class_id = str(uuid.uuid4())
+            new_class = {
+            'id': class_id,
+            'classcode':generate_random_string(),
+            'name':class_name,
+            'instructor': user['name'],
+            'members': [logged_user['id']],
+            'assignments': [],
+            'exams': []
+            }
+            for u in users:
+                if (u['id'] == logged_user['id']):
+                    u['joined_classes'].append(new_class)
+                    logged_user = u
+                    session['logged_user'] = logged_user
+            classes.append(new_class)
+            user['joined_classes'].append(new_class)
+            print('class created successfully')
+            return redirect('/home')
+    return redirect('/home')
+
+
+# ======= End Create Class ======
 
 # ====================== End Home Page ===============================
 

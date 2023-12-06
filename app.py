@@ -245,14 +245,10 @@ def todo():
 @app.route('/delete/<int:title_index>')
 def todo_delete(title_index):
     logged_user = session['logged_user']
-    index = 0
-    for user in users:
-        if user['id'] != logged_user['id']:
-            index += 1
-        else:
-            users[index]['todos'].remove(users[index]['todos'][title_index])
-            session['logged_user'] = users[index]
-            return redirect('/todos')
+    index = users.index(logged_user)
+    users[index]['todos'].remove(users[index]['todos'][title_index])
+    session['logged_user'] = users[index]
+    return redirect('/todos')
 
 @app.route('/todo_status/<int:title_index>/<stat>', methods=['POST'])
 def todo_status(title_index, stat):

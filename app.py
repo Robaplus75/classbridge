@@ -103,6 +103,7 @@ def before_request():
     g.logged_user = None
     if 'logged_user' in session:
         g.logged_user = session['logged_user']
+    print(f"logged user is {g.logged_user}")
 
 @app.route('/users')
 def userss():
@@ -114,6 +115,7 @@ def userss():
 def form():
     status_pass = ''
     status_user = ''
+    session.pop('logged_user', None)
     if request.method == 'POST':
 
         if request.form['submit'] == 'Login':

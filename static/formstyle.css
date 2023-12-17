@@ -54,6 +54,7 @@ form {
 form.sign-up-form {
   opacity: 0;
   z-index: 1;
+
 }
 
 form.sign-in-form {
@@ -77,6 +78,11 @@ form.sign-in-form {
   grid-template-columns: 15% 85%;
   padding: 0 0.4rem;
   position: relative;
+}
+.user_type_menu .input-field{
+  width: 45%;
+  margin: 0;
+
 }
 
 .input-field i {
@@ -379,6 +385,8 @@ form.sign-in-form {
 }
 .user_type_menu {
   width: 70%;
+  display: flex;
+  justify-content: space-between;
 }
 .selected {
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, make_response
+from flask import Flask, g, render_template, request, redirect, url_for, session, make_response
 import uuid
 
 app = Flask(__name__)
@@ -98,7 +98,11 @@ def generate_random_string():
     return random_string
 
 
-
+@app.before_request
+def before_request():
+    g.logged_user = None
+    if 'logged_user' in session:
+        g.logged_user = session['logged_user']
 
 @app.route('/users')
 def userss():
@@ -108,16 +112,15 @@ def userss():
 
 @app.route('/form', methods=['GET', 'POST'])
 def form():
-    print('its hosted on ')
-    print(request.host)
     status_pass = ''
     status_user = ''
     if request.method == 'POST':
 
         if request.form['submit'] == 'Login':
+            session.pop('logged_user', None)
             for user in users:
                 if user['username'] == request.form['username'] and user['password'] == request.form['password']:
-                    session['logged_user'] = user
+                    session['logged_user'] = user['id']
                     return redirect('/home')
             status_pass = """
              <div style="color:red;">
@@ -148,7 +151,7 @@ def form():
             user['id'] = user_id
 
             users.append(user)
-            session['logged_user'] = user
+            session['logged_user'] = user['id']
             return redirect('/home')
     else:
         return render_template('index.html', status_pass=status_pass)
@@ -159,31 +162,31 @@ def form():
 
 @app.route('/home')
 def home():
-    logged_user = session['logged_user']
+    if not g.logged_user:
+        return redirect('/form')
+    logged_user = None
     for user in users:
-        if user['id'] == logged_user['id']:
-            session['logged_user'] = user
-            logged_user = session['logged_user']
+        if session['logged_user'] == user['id']:
+            logged_user = user
     if logged_user:
-        return render_template('dashboard/homepage.html', user=logged_user)
+        return render_template('dashboard/homepage.html', user=logged_user, classes=classes)
     else:
         return redirect('/form')
 
 # ======= Join Class ======
 @app.route('/home/join', methods=['POST', 'GET'])
 def joinclass():
-    print('request recived')
+    if not g.logged_user:
+        return redirect('/form')
     if request.method == 'POST':
-        logged_user = session['logged_user']
         code = request.form['classCodee']
         for c in classes:
             if c['classcode'] == code:
                 for user in users:
-                    if logged_user['id'] == user['id']:
-                        if c not in user['joined_classes']:
-                            user['joined_classes'].append(c)
+                    if session['logged_user'] == user['id']:
+                        if c['id'] not in user['joined_classes']:
+                            user['joined_classes'].append(c['id'])
                             c['members'].append(user['id'])
-                        session['logged_user'] = user
                         return redirect('/home')
             
         return redirect('/home')
@@ -192,7 +195,7 @@ def joinclass():
 # ======= Create Class ====
 @app.route('/home/create', methods=['POST'])
 def createclass():
-    logged_user = session['logged_user']
+    logged_user_id = session['logged_user']
     class_name = request.form['class_name']
     inst_username = request.form['inst_username']
     for user in users:
@@ -203,18 +206,16 @@ def createclass():
             'classcode':generate_random_string(),
             'name':class_name,
             'instructor': user['name'],
-            'members': [logged_user['id']],
+            'members': [logged_user_id],
             'assignments': [],
             'exams': []
             }
             for u in users:
-                if (u['id'] == logged_user['id']):
-                    u['joined_classes'].append(new_class)
-                    logged_user = u
-                    session['logged_user'] = logged_user
+                if (u['id'] == logged_user_id):
+                    u['joined_classes'].append(new_class['id'])
             classes.append(new_class)
-            if new_class not in user['joined_classes']:
-                user['joined_classes'].append(new_class)
+            if new_class['id'] not in user['joined_classes']:
+                user['joined_classes'].append(new_class['id'])
             print('class created successfully')
             return redirect('/home')
     return redirect('/home')
@@ -228,7 +229,13 @@ def createclass():
 
 @app.route('/todos', methods=['GET', 'POST'])
 def todo():
-    logged_user = session['logged_user']
+    if not g.logged_user:
+        return redirect('/form')
+    logged_user_id = session['logged_user']
+    logged_user = None
+    for user in users:
+        if user['id'] == logged_user_id:
+            logged_user = user
     if request.method == 'GET':
         if logged_user:
             return render_template('todo/todo.html', user=logged_user)
@@ -237,25 +244,31 @@ def todo():
     elif request.method == 'POST':
         added_todo = request.form['title']
         for user in users:
-            if user['id'] == logged_user['id']:
+            if user['id'] == logged_user_id:
                 user['todos'].insert(0, {'title': added_todo, 'completed': 'false'})
-                session['logged_user'] = user
                 return redirect('/todos')
 
-@app.route('/delete/<int:title_index>')
-def todo_delete(title_index):
-    logged_user = session['logged_user']
-    index = users.index(logged_user)
-    users[index]['todos'].remove(users[index]['todos'][title_index])
-    session['logged_user'] = users[index]
+@app.route('/delete/<todo_title>')
+def todo_delete(todo_title):
+    logged_user_id = session['logged_user']
+    logged_user = None
+    for user in users:
+        if user['id'] == logged_user_id:
+            logged_user = user
+            for todo in user['todos']:
+                if todo['title'] == todo_title:
+                    user['todos'].remove(todo)
     return redirect('/todos')
 
 @app.route('/todo_status/<int:title_index>/<stat>', methods=['POST'])
 def todo_status(title_index, stat):
-    logged_user = session['logged_user']
+    logged_user_id = session['logged_user']
+    logged_user = None
+    for user in users:
+        if user['id'] == logged_user_id:
+            logged_user = user
     index = users.index(logged_user)
     users[index]['todos'][title_index]['completed'] = stat;session
-    session['logged_user'] = users[index]
     response = make_response()
     response.status_code = 200
     return response
@@ -274,7 +287,11 @@ def calculator():
 # ================== Class room ===================================
 @app.route('/class/<class_id>')
 def class_room(class_id):
-    logged_user = session['logged_user']
+    if not g.logged_user:
+        return redirect('/form')
+    for user in users:
+        if user['id'] == session['logged_user']:
+            logged_user = user
     if request.method == 'GET':
             for c in classes:
                 if c['id'] == class_id:

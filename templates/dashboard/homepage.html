@@ -146,15 +146,19 @@
                     <table>
 
                         {% if user.joined_classes %}
-                            {% for class in user.joined_classes %}
-                            <tr onclick="window.location.href = '/class/{{ class['id'] }}';">
-                                <td width="60px">
-                                    <div class="imgBx"><img src="{{ url_for('static', filename='dashboard/imgs/customer01.jpg') }}" alt=""></div>
-                                </td>
-                                <td>
-                                    <h4>{{ class['name'] }}<br> <span>Instructor: {{ class['instructor'] }}</span></h4>
-                                </td>
-                            </tr>
+                            {% for class_id in user.joined_classes %}
+                            {% for class in classes %}
+                                    {% if class_id == class['id'] %}
+                                        <tr onclick="window.location.href = '/class/{{ class_id }}';">
+                                            <td width="60px">
+                                                <div class="imgBx"><img src="{{ url_for('static', filename='dashboard/imgs/customer01.jpg') }}" alt=""></div>
+                                            </td>
+                                            <td>
+                                                <h4>{{ class['name'] }}<br> <span>Instructor: {{ class['instructor'] }}</span></h4>    
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                            {% endfor %}
                             {% endfor %}
                         {% else %}
                             <tr>

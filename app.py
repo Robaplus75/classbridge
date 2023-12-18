@@ -111,6 +111,11 @@ def userss():
 
 #====================== Signup/Login form =============================
 
+@app.route('/')
+def landingpage():
+    return redirect('/form')
+
+
 @app.route('/form', methods=['GET', 'POST'])
 def form():
     status_pass = ''

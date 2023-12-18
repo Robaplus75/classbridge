@@ -6,13 +6,13 @@ Whether you're an instructor or a student, Classbridge simplifies your tasks and
 
 ===========How To Start The app==============
 
-1. install Flask into you system using pip3
+1. install The requirements into you system using pip3
 	
 	use the command below
 	
-	pip3 install flask
+	pip3 install -r requirements
 
-2. run thear app
+2. run the app
 
 	Goto the directory, the start the app using the command below
 
